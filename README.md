@@ -37,7 +37,7 @@
 | `/api/user/cart`     | POST   | Add to cart        | `{ "cart": [{ "id": 1, "count": 2, "price": 100 }, { "id": 5, "count": 1, "price": 200 }] }` |
 | `/api/user/cart`     | GET    | Get cart           | None                                                                                         |
 | `/api/user/cart`     | DELETE | Delete cart        | None                                                                                         |
-| `/api/user/address`  | POST   | Add user address   | `{ "address": "korat" }`                                                                     |
+| `/api/user/address`  | POST   | Add user address   | `{ "address": "ayutthaya" }`                                                                     |
 | `/api/user/order`    | POST   | Place an order     | None                                                                                         |
 | `/api/user/order`    | GET    | Get user orders    | None                                                                                         |
 
