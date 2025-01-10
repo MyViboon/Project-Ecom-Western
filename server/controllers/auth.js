@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
     if (user) {
       return res.status(400).json({ message: "Email already exits!!" });
     }
-    //HashPassword in DB SQL
+    //HashPassword
     const hashPassword = await bcrypt.hash(password, 10);
     console.log(hashPassword);
     //Register to DB
