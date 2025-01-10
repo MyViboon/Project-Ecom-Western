@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String?
+  name      String?
+  picture   String?
+  role      String   @default("user")
+  enable    Boolean  @default(true)
+  address   String?
+  orders    Order[]
+  carts     Cart[]
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}
+
+model Product {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  sold        Int               @default(0)
+  quantity    Int
+  orderItems  ProducetOnOrder[]
+  cartItems   ProducetOnCart[]
+  images      Image[]
+  createdAt   DateTime          @default(now())
+  updateAt    DateTime          @updatedAt
+}
+
+model Order {
+  id          Int               @id @default(autoincrement())
+  products    ProducetOnOrder[]
+  cartTotal   Float
+  orderStatus String            @default("Not Process")
+  orderdBy    User              @relation(fields: [orderedById], references: [id])
+  orderedById Int
+  createdAt   DateTime          @default(now())
+  updateAt    DateTime          @updatedAt
+}
+
+model ProducetOnOrder {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+}
+
+model Catagory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}
+
+model Cart {
+  id          Int              @id @default(autoincrement())
+  products    ProducetOnCart[]
+  cartTotal   Float
+  orderdBy    User             @relation(fields: [orderedById], references: [id])
+  orderedById Int
+  createdAt   DateTime         @default(now())
+  updateAt    DateTime         @updatedAt
+}
+
+model ProducetOnCart {
+  id        Int     @id @default(autoincrement())
+  cart      Cart    @relation(fields: [cardId], references: [id])
+  cardId    Int
+  roduct    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  count     Int
+  price     Float
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  asset_id  String
+  public_id String
+  url       String
+  secure_id String
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+}
