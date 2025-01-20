@@ -40,6 +40,8 @@ model Product {
   images      Image[]
   createdAt   DateTime          @default(now())
   updateAt    DateTime          @updatedAt
+  catagory    Catagory?         @relation(fields: [catagoryId], references: [id])
+  catagoryId  Int?
 }
 
 model Order {
@@ -62,10 +64,11 @@ model ProducetOnOrder {
 }
 
 model Catagory {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updateAt  DateTime  @updatedAt
 }
 
 model Cart {

@@ -1,8 +1,30 @@
+const prisma = require("../config/prisma");
+
 exports.create = async (req, res) => {
   try {
     // code
+    const { title, description, price, quantity, catagoryId, images } =
+      req.body;
+    // console.log(title, description, price, quantity, images);
+    const product = await prisma.product.create({
+      data: {
+        title: title,
+        description: description,
+        price: parseFloat(price),
+        quantity: parseInt(quantity),
+        catagoryId: parseInt(catagoryId),
+        images: {
+          create: images.map((item) => ({
+            asset_id: item.asset_id,
+            public_id: item.public_id,
+            url: item.url,
+            secure_id: item.secure_id,
+          })),
+        },
+      },
+    });
 
-    res.send("Hello Product");
+    res.send(product);
   } catch (err) {
     console.log(err);
     res.status(500).json({ mesage: "Server ERROR" });
