@@ -143,11 +143,90 @@ exports.listby = async (req, res) => {
   }
 };
 
+//Search Filter Function
+const handleQuery = async (req, res, query) => {
+  try {
+    //code
+    const prodeucts = await prisma.product.findMany({
+      where: {
+        title: {
+          contains: query,
+        },
+      },
+      include: {
+        catagory: true,
+        images: true,
+      },
+    });
+    res.send(prodeucts);
+  } catch (err) {
+    //error
+    console.log(err);
+    res.status(500).json({ mesage: "Serrch Error" });
+  }
+};
+const handlePrice = async (req, res, priceRange) => {
+  try {
+    //code
+    const prodeucts = await prisma.product.findMany({
+      where: {
+        price: {
+          gte: priceRange[0],
+          lte: priceRange[1],
+        },
+      },
+      include: {
+        catagory: true,
+        images: true,
+      },
+    });
+    res.send(prodeucts);
+  } catch (err) {
+    //error
+    console.log(err);
+    res.status(500).json({ mesage: "Server Error" });
+  }
+};
+const handleCategory = async (req, res, categoryId) => {
+  try {
+    //code
+    const prodeucts = await prisma.product.findMany({
+      where: {
+        catagoryId: {
+          in: categoryId.map((id) => Number(id)),
+        },
+      },
+      include: {
+        catagory: true,
+        images: true,
+      },
+    });
+    res.send(prodeucts);
+  } catch (err) {
+    //error
+    console.log(err);
+    res.status(500).json({ mesage: "Server Error" });
+  }
+};
+
 exports.searchFilters = async (req, res) => {
   try {
     // code
+    const { query, catagory, price } = req.body;
+    if (query) {
+      console.log("query---->", query);
+      await handleQuery(req, res, query);
+    }
+    if (catagory) {
+      await handleCategory(req, res, catagory);
+      console.log("catagory---->", catagory);
+    }
+    if (price) {
+      await handlePrice(req, res, price);
+      console.log("price---->", price);
+    }
 
-    res.send("Hello SearchFilters Product");
+    // res.send("Hello SearchFilters Product");
   } catch (err) {
     console.log(err);
     res.status(500).json({ mesage: "Server ERROR" });
