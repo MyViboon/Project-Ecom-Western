@@ -65,14 +65,13 @@ exports.userCart = async (req, res) => {
     });
     // console.log(user);
 
-    //Delete Old Cart Item
-    await prisma.producetOnCart.deleteMany({
+    //Delete Old Cart Item ลบเก่าของที่มีอยู่ ProductOnCart
+    await prisma.productOnCart.deleteMany({
       where: {
         cart: { orderedById: user.id },
       },
     });
-
-    //Delete Old Cart
+    //Delete Old Cart ลบเก่าของที่มีอยู่ Cart
     await prisma.cart.deleteMany({
       where: { orderedById: user.id },
     });
@@ -113,7 +112,23 @@ exports.userCart = async (req, res) => {
 exports.getUserCart = async (req, res) => {
   try {
     //code
-    res.send("Hello GetUserCart");
+    const cart = await prisma.cart.findFirst({
+      where: {
+        orderedById: Number(req.user.id),
+      },
+      include: {
+        products: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+    // console.log(cart);
+    res.json({
+      products: cart.products,
+      cartTotal: cart.cartTotal,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server Error" });
@@ -123,7 +138,24 @@ exports.getUserCart = async (req, res) => {
 exports.emptyCart = async (req, res) => {
   try {
     //code
-    res.send("Hello EmptyCart");
+    const cart = await prisma.cart.findFirst({
+      where: {
+        orderedById: Number(req.user.id),
+      },
+    });
+    if (!cart) {
+      return res.status(400).json({ message: "No cart" });
+    }
+    await prisma.productOnCart.deleteMany({
+      where: {
+        cardId: cart.id,
+      },
+    });
+    const result = await prisma.cart.deleteMany({
+      where: { orderedById: Number(req.user.id) },
+    });
+    // console.log(result);
+    res.json({ message: "Cart Empty Success", deletedCount: result.count });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server Error" });
@@ -133,7 +165,16 @@ exports.emptyCart = async (req, res) => {
 exports.saveAddress = async (req, res) => {
   try {
     //code
-    res.send("Hello SaveAddress");
+    const { address } = req.body;
+    console.log(address);
+    const addressUser = await prisma.user.update({
+      where: { id: Number(req.user.id) },
+      data: {
+        address: address,
+      },
+    });
+
+    res.json({ ok: true, message: "Update success" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server Error" });
