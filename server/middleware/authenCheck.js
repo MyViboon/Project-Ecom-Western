@@ -21,7 +21,6 @@ exports.authCheck = async (req, res, next) => {
     if (!user.enable) {
       res.status(400).json({ message: "This account cannot access" });
     }
-
     // console.log(req.user);
     // console.log(user);
     next();
