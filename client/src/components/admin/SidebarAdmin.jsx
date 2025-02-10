@@ -50,6 +50,7 @@ const SidebarAdmin = () => {
         ))}
       </nav>
 
+      {/* LOGOUT */}
       <div>
         <NavLink
           className={({ isActive }) =>
