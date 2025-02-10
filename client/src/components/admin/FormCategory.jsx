@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import useEcomStore from "../../store/ecom-store";
 import {
   createCategory,
@@ -25,14 +26,47 @@ const FormCategory = () => {
     }
   };
 
+  //   const handleRemove = async (id) => {
+  //     try {
+  //       const res = await removeCategory(token, id);
+  //       //   console.log(res);
+  //       toast.success(`Delete ${res.data.name} Success`);
+  //       getCategory(token);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
   const handleRemove = async (id) => {
     try {
-      const res = await removeCategory(token, id);
-      //   console.log(res);
-      toast.success(`Delete ${res.data.name} Success`);
-      getCategory(token);
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "คุณต้องการลบรายการนี้หรือไม่?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ลบ",
+        cancelButtonText: "ยกเลิก",
+      });
+
+      if (result.isConfirmed) {
+        const res = await removeCategory(token, id);
+        // toast.success(`Delete ${res.data.name} Success`);
+        await getCategory(token); // อัปเดตรายการหลังจากลบเสร็จ
+
+        Swal.fire({
+          title: "Deleted!",
+          text: `ทำการลบ "${res.data.name}" เรียบร้อย`,
+          icon: "success",
+        });
+      }
     } catch (err) {
       console.log(err);
+      Swal.fire({
+        title: "Error!",
+        text: "Something went wrong while deleting.",
+        icon: "error",
+      });
     }
   };
 
