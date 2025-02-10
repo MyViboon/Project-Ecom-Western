@@ -1,41 +1,30 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useEcomStore from "../../store/ecom-store";
-import {
-  createCategory,
-  listCategory,
-  removeCategory,
-} from "../../api/Category";
+import { createCategory, removeCategory } from "../../api/Category";
 import { toast } from "react-toastify";
 
 const FormCategory = () => {
   const token = useEcomStore((state) => state.token);
   const [name, setName] = useState("");
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
+  const categories = useEcomStore((state) => state.categories);
+  const getCategory = useEcomStore((state) => state.getCategory);
 
   useEffect(() => {
     getCategory(token);
   }, []);
 
-  const getCategory = async (token) => {
-    try {
-      const res = await listCategory(token);
-      setCategories(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //   const handleRemove = async (id) => {
-  //     try {
-  //       const res = await removeCategory(token, id);
-  //       //   console.log(res);
-  //       toast.success(`Delete ${res.data.name} Success`);
-  //       getCategory(token);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
+  // const handleRemove = async (id) => {
+  //   try {
+  //     const res = await removeCategory(token, id);
+  //     //   console.log(res);
+  //     toast.success(`Delete ${res.data.name} Success`);
+  //     getCategory(token);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   const handleRemove = async (id) => {
     try {
       const result = await Swal.fire({
