@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useEcomStore from "../../store/ecom-store";
 import { createProducr } from "../../api/product";
 import { toast } from "react-toastify";
+import Uploadfile from "./Uploadfile";
 
 const initialState = {
   title: "USB",
@@ -20,7 +21,7 @@ const FormProduct = () => {
   const products = useEcomStore((state) => state.products);
   const [form, setForm] = useState(initialState);
 
-  console.log(products);
+  // console.log(products);
 
   useEffect(() => {
     getCategory(token);
@@ -28,7 +29,7 @@ const FormProduct = () => {
   }, []);
 
   const handleOnChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    // console.log(e.target.name, e.target.value);
     setForm({
       ...form,
       [e.target.name]: e.target.value,
@@ -39,7 +40,7 @@ const FormProduct = () => {
     e.preventDefault();
     try {
       const res = await createProducr(token, form);
-      console.log(res);
+      // console.log(res);
       toast.success(`เพิ่มข้อมูล ${res.data.title} สำเร็จ`);
     } catch (err) {
       console.log(err);
@@ -97,6 +98,9 @@ const FormProduct = () => {
           ))}
         </select>
         <hr />
+        {/* upload flie */}
+        <Uploadfile form={form} setForm={setForm} />
+
         <button className="bg-blue-500">เพิ่มสินค้า</button>
 
         <hr />
@@ -115,9 +119,9 @@ const FormProduct = () => {
           </thead>
           <tbody>
             {products.map((item, index) => {
-              console.log(item);
+              // console.log(item);
               return (
-                <tr>
+                <tr key={index}>
                   <th scope="row">{index + 1}</th>
                   <td>{item.title}</td>
                   <td>{item.description}</td>
@@ -126,7 +130,7 @@ const FormProduct = () => {
                   <td>{item.sold}</td>
                   <td>{item.updateAt}</td>
                   <td>
-                    <p>แก้ไช</p>
+                    <p>แก้ไข</p>
                     <p>ลบ</p>
                   </td>
                 </tr>
