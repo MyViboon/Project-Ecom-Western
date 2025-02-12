@@ -12,9 +12,9 @@ const Uploadfile = ({ form, setForm }) => {
     const files = e.target.files;
     if (files) {
       setIsLoading(true);
-      let allFiles = form.images;
+      let allFiles = form.images; // [] empty array
       for (let i = 0; i < files.length; i++) {
-        console.log(files[i]);
+        // console.log(files[i]);
 
         // validate file
         const file = files[i];
@@ -31,7 +31,19 @@ const Uploadfile = ({ form, setForm }) => {
           100,
           0,
           (data) => {
-            uploadFiles(token, data);
+            uploadFiles(token, data)
+              .then((res) => {
+                console.log(res);
+                allFiles.push(res.data);
+                setForm({
+                  ...form,
+                  images: allFiles,
+                });
+                toast.success("Upload image Sucess!!");
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           },
           "base64"
         );

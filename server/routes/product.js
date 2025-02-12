@@ -8,7 +8,10 @@ const {
   searchFilters,
   update,
   read,
+  createImage,
+  removeImage,
 } = require("../controllers/product");
+const { authCheck, adminCheck } = require("../middleware/authenCheck");
 
 // locallhost:5000/api/product
 router.post("/product", create);
@@ -18,5 +21,8 @@ router.put("/product/:id", update);
 router.delete("/product/:id", remove);
 router.post("/productby", listby);
 router.post("/search/filters", searchFilters);
+
+router.post("/images", authCheck, adminCheck, createImage);
+router.post("/removeimages", authCheck, adminCheck, removeImage);
 
 module.exports = router;

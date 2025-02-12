@@ -40,7 +40,7 @@ const FormProduct = () => {
     e.preventDefault();
     try {
       const res = await createProducr(token, form);
-      // console.log(res);
+      console.log(res);
       toast.success(`เพิ่มข้อมูล ${res.data.title} สำเร็จ`);
     } catch (err) {
       console.log(err);

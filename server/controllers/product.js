@@ -1,4 +1,5 @@
 const prisma = require("../config/prisma");
+const cloudinary = require("cloudinary").v2;
 
 exports.create = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ exports.create = async (req, res) => {
             asset_id: item.asset_id,
             public_id: item.public_id,
             url: item.url,
-            secure_id: item.secure_id,
+            secure_url: item.secure_url,
           })),
         },
       },
@@ -230,5 +231,35 @@ exports.searchFilters = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ mesage: "Server ERROR" });
+  }
+};
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUND_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+exports.createImage = async (req, res) => {
+  try {
+    // console.log(req.body);
+    const result = await cloudinary.uploader.upload(req.body.image, {
+      public_id: `viboon-${Date.now()}`,
+      resource_type: "auto",
+      folder: "Ecom2025",
+    });
+    res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.removeImage = async (req, res) => {
+  try {
+    res.send("Hello Remove Images");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server Error" });
   }
 };
