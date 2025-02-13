@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
-import { uploadFiles } from "../../api/product";
+import { removeFiles, uploadFiles } from "../../api/product";
 import useEcomStore from "../../store/ecom-store";
 
 const Uploadfile = ({ form, setForm }) => {
@@ -50,9 +50,47 @@ const Uploadfile = ({ form, setForm }) => {
       }
     }
   };
+  console.log(form);
+
+  const handleDelete = (public_id) => {
+    const images = form.images;
+    removeFiles(token, public_id)
+      .then((res) => {
+        const filterImage = images.filter((item) => {
+          console.log(item);
+          return item.public_id !== public_id;
+        });
+        console.log("filterImage", filterImage);
+        setForm({
+          ...form,
+          images: filterImage,
+        });
+        toast.error(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
-    <div>
-      <input onChange={handleOnChange} type="file" name="images" multiple />
+    <div className="my-4">
+      <div className="flex mx-4 gap-4 my-4">
+        {form.images.map((item, index) => (
+          <div className="relative" key={index}>
+            <img className="w-24 h-24 hover:scale-105" src={item.url} alt="" />
+            <span
+              className=" absolute top-0 right-0 bg-red-500 p-1 rounded"
+              onClick={() => handleDelete(item.public_id)}
+            >
+              X
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <input onChange={handleOnChange} type="file" name="images" multiple />
+      </div>
     </div>
   );
 };
