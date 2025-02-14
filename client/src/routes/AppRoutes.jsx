@@ -17,6 +17,8 @@ import Layoutuser from "../layouts/Layoutuser";
 import HomeUser from "../pages/user/HomeUser";
 import ProtectRouteUser from "./ProtectRouteUser";
 import ProtectRouteAdmin from "./ProtectRouteAdmin";
+import About from "../pages/About";
+import EditProduct from "../pages/admin/EditProduct";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +28,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "shop", element: <Shop /> },
       { path: "cart", element: <Cart /> },
+      { path: "about", element: <About /> },
       { path: "history", element: <History /> },
       { path: "checkout", element: <Checkout /> },
       { path: "login", element: <Login /> },
@@ -39,6 +42,7 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "category", element: <Category /> },
       { path: "product", element: <Product /> },
+      { path: "product/:id", element: <EditProduct /> },
       { path: "manage", element: <Manage /> },
     ],
   },

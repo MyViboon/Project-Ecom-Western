@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import useEcomStore from "../../store/ecom-store";
-import { createProducr } from "../../api/product";
+import { readProduct, updateProduct } from "../../api/product";
 import { toast } from "react-toastify";
 import Uploadfile from "./Uploadfile";
-import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const initialState = {
   title: "USB",
@@ -14,20 +14,31 @@ const initialState = {
   images: [],
 };
 
-const FormProduct = () => {
+const FormEditProoduct = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const token = useEcomStore((state) => state.token);
   const getCategory = useEcomStore((state) => state.getCategory);
   const categories = useEcomStore((state) => state.categories);
-  const getProduct = useEcomStore((state) => state.getProduct);
-  const products = useEcomStore((state) => state.products);
   const [form, setForm] = useState(initialState);
 
   // console.log(products);
 
   useEffect(() => {
     getCategory(token);
-    getProduct(token, 100);
+    fetchProduct(token, id, form);
   }, []);
+
+  const fetchProduct = async (token) => {
+    try {
+      const res = await readProduct(token, id, form);
+      console.log("res form backend", res);
+      setForm(res.data);
+    } catch (err) {
+      console.log("Err fetch data", err);
+    }
+  };
+  console.log(form);
 
   const handleOnChange = (e) => {
     // console.log(e.target.name, e.target.value);
@@ -40,9 +51,10 @@ const FormProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await createProducr(token, form);
+      const res = await updateProduct(token, id, form);
       console.log(res);
       toast.success(`เพิ่มข้อมูล ${res.data.title} สำเร็จ`);
+      navigate("/admin/product");
     } catch (err) {
       console.log(err);
     }
@@ -102,64 +114,13 @@ const FormProduct = () => {
         {/* upload flie */}
         <Uploadfile form={form} setForm={setForm} />
 
-        <button className="bg-blue-500">เพิ่มสินค้า</button>
+        <button className="bg-blue-500">แก้ไขสินค้า</button>
 
         <hr />
         <br />
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">No.</th>
-              <th scope="col">รูปภาพ</th>
-              <th scope="col">ชื่อสินค้า</th>
-              <th scope="col">รายระเอียด</th>
-              <th scope="col">ราคา</th>
-              <th scope="col">จำนวน</th>
-              <th scope="col">จำนวนที่ขาย</th>
-              <th scope="col">จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((item, index) => {
-              // console.log(item);
-              return (
-                <tr key={index}>
-                  <th scope="row">{index + 1}</th>
-
-                  <td>
-                    {item.images.length > 0 ? (
-                      <img
-                        className="w-24 h-24 rounded-lg shadow-md "
-                        src={item.images[0].url}
-                        alt=""
-                      />
-                    ) : (
-                      <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center shadow-sm">
-                        No Image
-                      </div>
-                    )}
-                  </td>
-
-                  <td>{item.title}</td>
-                  <td>{item.description}</td>
-                  <td>{item.price}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.sold}</td>
-                  <td>{item.updateAt}</td>
-                  <td>
-                    <p className="bg-yellow-500 rounded-md p-1 shadow-md">
-                      <Link to={`/admin/product/${item.id}`}>แก้ไข</Link>
-                    </p>
-                    <p>ลบ</p>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
       </form>
     </div>
   );
 };
 
-export default FormProduct;
+export default FormEditProoduct;
