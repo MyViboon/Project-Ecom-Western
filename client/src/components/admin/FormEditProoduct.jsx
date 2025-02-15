@@ -60,6 +60,10 @@ const FormEditProoduct = () => {
     }
   };
 
+  const onBack = () => {
+    navigate("/admin/product");
+  };
+
   return (
     <div className="container mx-auto p-4 bg-white shadow-md">
       <form action="" onSubmit={handleSubmit}>
@@ -114,11 +118,14 @@ const FormEditProoduct = () => {
         {/* upload flie */}
         <Uploadfile form={form} setForm={setForm} />
 
-        <button className="bg-blue-500">แก้ไขสินค้า</button>
+        <button className="bg-blue-500 ">แก้ไขสินค้า</button>
 
         <hr />
         <br />
       </form>
+      <button onClick={onBack} className="bg-yellow-300 px-5 ">
+        กลับ
+      </button>
     </div>
   );
 };

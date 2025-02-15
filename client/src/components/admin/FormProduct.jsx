@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import useEcomStore from "../../store/ecom-store";
-import { createProducr } from "../../api/product";
+import { createProducr, deleteProduct } from "../../api/product";
 import { toast } from "react-toastify";
 import Uploadfile from "./Uploadfile";
 import { Link } from "react-router-dom";
 
 const initialState = {
-  title: "USB",
-  description: "Type-C",
-  price: 50,
-  quantity: 40,
+  title: "",
+  description: "",
+  price: 0,
+  quantity: 0,
   catagoryId: "",
   images: [],
 };
@@ -42,9 +42,24 @@ const FormProduct = () => {
     try {
       const res = await createProducr(token, form);
       console.log(res);
+      setForm(initialState);
+      getProduct(token);
       toast.success(`เพิ่มข้อมูล ${res.data.title} สำเร็จ`);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("จะลบหรอ")) {
+      try {
+        const res = await deleteProduct(token, id);
+        console.log(res);
+        toast.success("Deleted ลบสินค้าเรียบร้อยแล้ว");
+        getProduct(token);
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -146,11 +161,16 @@ const FormProduct = () => {
                   <td>{item.quantity}</td>
                   <td>{item.sold}</td>
                   <td>{item.updateAt}</td>
-                  <td>
+                  <td className="flex gap-2">
                     <p className="bg-yellow-500 rounded-md p-1 shadow-md">
                       <Link to={`/admin/product/${item.id}`}>แก้ไข</Link>
                     </p>
-                    <p>ลบ</p>
+                    <p
+                      className="bg-red-500 rounded-md p-1 shadow-md"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      ลบ
+                    </p>
                   </td>
                 </tr>
               );

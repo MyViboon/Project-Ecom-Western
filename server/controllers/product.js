@@ -1,6 +1,12 @@
 const prisma = require("../config/prisma");
 const cloudinary = require("cloudinary").v2;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUND_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 exports.create = async (req, res) => {
   try {
     // code
@@ -114,6 +120,30 @@ exports.remove = async (req, res) => {
   try {
     // code
     const { id } = req.params;
+    //ลบรูปที่ cloud
+
+    // 1. ค้นหาสินค้า include images
+    const product = await prisma.product.findFirst({
+      where: { id: Number(id) },
+      include: { images: true },
+    });
+    if (!product) {
+      return res.status(400).json({ mesage: "Product not found" });
+    }
+
+    // 2. Promise ลบ รูปภาพใน cloud
+    const deleteImage = product.images.map(
+      (image) =>
+        new Promise((resolve, reject) => {
+          cloudinary.uploader.destroy(image.public_id, (error, result) => {
+            if (error) reject(error);
+            else resolve(reject);
+          });
+        })
+    );
+    await Promise.all(deleteImage);
+
+    // 3. ลบสินค้า
     await prisma.product.delete({
       where: {
         id: Number(id),
@@ -233,12 +263,6 @@ exports.searchFilters = async (req, res) => {
     res.status(500).json({ mesage: "Server ERROR" });
   }
 };
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUND_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 exports.createImage = async (req, res) => {
   try {
