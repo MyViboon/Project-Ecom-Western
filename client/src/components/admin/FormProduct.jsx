@@ -4,6 +4,7 @@ import { createProducr, deleteProduct } from "../../api/product";
 import { toast } from "react-toastify";
 import Uploadfile from "./Uploadfile";
 import { Link } from "react-router-dom";
+import { Pencil, Trash2 } from "lucide-react";
 
 const initialState = {
   title: "",
@@ -20,7 +21,14 @@ const FormProduct = () => {
   const categories = useEcomStore((state) => state.categories);
   const getProduct = useEcomStore((state) => state.getProduct);
   const products = useEcomStore((state) => state.products);
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    price: 0,
+    quantity: 0,
+    catagoryId: "",
+    images: [],
+  });
 
   // console.log(products);
 
@@ -117,12 +125,14 @@ const FormProduct = () => {
         {/* upload flie */}
         <Uploadfile form={form} setForm={setForm} />
 
-        <button className="bg-blue-500">เพิ่มสินค้า</button>
+        <button className="bg-blue-500 p-2 rounded-md shadow-md hover:scale-105 hover:-translate-y-1 hover:duration-200 ">
+          เพิ่มสินค้า
+        </button>
 
         <hr />
         <br />
-        <table className="table">
-          <thead>
+        <table className="table w-full border">
+          <thead className="bg-gray-200 border">
             <tr>
               <th scope="col">No.</th>
               <th scope="col">รูปภาพ</th>
@@ -131,6 +141,7 @@ const FormProduct = () => {
               <th scope="col">ราคา</th>
               <th scope="col">จำนวน</th>
               <th scope="col">จำนวนที่ขาย</th>
+              <th scope="col">วันที่อัปเดต</th>
               <th scope="col">จัดการ</th>
             </tr>
           </thead>
@@ -162,14 +173,16 @@ const FormProduct = () => {
                   <td>{item.sold}</td>
                   <td>{item.updateAt}</td>
                   <td className="flex gap-2">
-                    <p className="bg-yellow-500 rounded-md p-1 shadow-md">
-                      <Link to={`/admin/product/${item.id}`}>แก้ไข</Link>
+                    <p className="bg-yellow-500 rounded-md p-1 hover:scale-105 hover:-translate-y-1 hover:duration-200 shadow-md">
+                      <Link to={`/admin/product/${item.id}`}>
+                        <Pencil />
+                      </Link>
                     </p>
                     <p
-                      className="bg-red-500 rounded-md p-1 shadow-md"
+                      className="bg-red-500 rounded-md p-1 hover:scale-105 hover:-translate-y-1 hover:duration-200 shadow-md "
                       onClick={() => handleDelete(item.id)}
                     >
-                      ลบ
+                      <Trash2 />
                     </p>
                   </td>
                 </tr>
